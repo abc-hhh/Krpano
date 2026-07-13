@@ -1,0 +1,832 @@
+<krpano version="1.20.11" title="Virtual Tour">
+
+	<include url="skin/vtourskin.xml" />
+
+	<!-- customize skin settings: maps, gyro, webvr, thumbnails, tooltips, layout, design, ... -->
+	<skin_settings maps="false"
+	               maps_type="google"
+	               maps_bing_api_key=""
+	               maps_google_api_key=""
+	               maps_zoombuttons="false"
+	               maps_loadonfirstuse="true"
+	               gyro="true"
+	               gyro_keeplookingdirection="false"
+	               webvr="true"
+	               webvr_keeplookingdirection="true"
+	               webvr_prev_next_hotspots="true"
+	               autotour="false"
+	               littleplanetintro="false"
+	               followmousecontrol="false"
+	               title="true"
+	               thumbs="true"
+	               thumbs_width="120" thumbs_height="80" thumbs_padding="10" thumbs_crop="0|40|240|160"
+	               thumbs_opened="false"
+	               thumbs_text="false"
+	               thumbs_dragging="true"
+	               thumbs_onhoverscrolling="false"
+	               thumbs_scrollbuttons="false"
+	               thumbs_scrollindicator="false"
+	               thumbs_loop="false"
+	               tooltips_buttons="false"
+	               tooltips_thumbs="false"
+	               tooltips_hotspots="true"
+	               tooltips_mapspots="false"
+	               deeplinking="false"
+	               loadscene_flags="MERGE"
+	               loadscene_blend="ZOOMBLEND(2.0, 2.0)"
+	               loadscene_blend_prev="ZOOMBLEND(2.0, 2.0)"
+	               loadscene_blend_next="ZOOMBLEND(2.0, 2.0)"
+	               loadingtext=""
+	               layout_width="100%"
+	               layout_maxwidth="814"
+	               controlbar_width="-24"
+	               controlbar_height="40"
+	               controlbar_offset="20"
+	               controlbar_offset_closed="-40"
+	               controlbar_overlap.no-fractionalscaling="10"
+	               controlbar_overlap.fractionalscaling="0"
+	               design_skin_images="vtourskin.png"
+	               design_bgcolor="0x2D3E50"
+	               design_bgalpha="0.8"
+	               design_bgborder="0"
+	               design_bgroundedge="1"
+	               design_bgshadow="0 4 10 0x000000 0.3"
+	               design_thumbborder_bgborder="3 0xFFFFFF 1.0"
+	               design_thumbborder_padding="2"
+	               design_thumbborder_bgroundedge="0"
+	               design_text_css="color:#FFFFFF; font-family:Arial;"
+	               design_text_shadow="1"
+	               />
+
+	<!--
+	    For an alternative skin design either change the <skin_settings> values 
+	    from above or optionally include one of the predefined designs from below.
+	-->
+	<!-- <include url="skin/vtourskin_design_flat_light.xml"  /> -->
+	<!-- <include url="skin/vtourskin_design_glass.xml"       /> -->
+	<!-- <include url="skin/vtourskin_design_ultra_light.xml" /> -->
+	<!-- <include url="skin/vtourskin_design_117.xml"         /> -->
+	<!-- <include url="skin/vtourskin_design_117round.xml"    /> -->
+	<!-- <include url="skin/vtourskin_design_black.xml"       /> -->
+
+
+	<!-- ============================================== -->
+	<!-- 右上角自定义全屏与 VR 按钮 (已移至 Vue 实现) -->
+	<!-- ============================================== -->
+	
+	<!-- ============================================== -->
+	<!-- 全局自动巡游动画控制 (用户操作前持续跨场景轮播) -->
+	<!-- ============================================== -->
+	
+	<events name="intro_events" keep="true"
+	        onnewscene="js(onPanoSceneChanged(get(xml.scene))); start_global_autotour();"
+	        onmousedown="cancel_intro();"
+	        ontouchstart="cancel_intro();"
+	        onmousewheel="cancel_intro();"
+	        onkeydown="cancel_intro();"
+	        />
+
+	<action name="init_intro_state" autorun="preinit">
+		set(global_intro_cancelled, false);
+	</action>
+
+	<action name="start_global_autotour">
+		if(!global_intro_cancelled,
+			set(is_intro_running, true);
+			
+			<!-- 计算下一个场景的索引，如果到最后一个则回到第一个 -->
+			copy(cur_idx, scene[get(xml.scene)].index);
+			add(next_idx, cur_idx, 1);
+			if(next_idx == scene.count, set(next_idx, 0));
+			copy(next_scene_name, scene[get(next_idx)].name);
+			
+			<!-- 自动旋转 270 度，耗时 20 秒，完成后切换到下一个场景 -->
+			tween(view.hlookat, calc(view.hlookat + 270), 20, linear,
+				if(is_intro_running,
+					set(is_intro_running, false);
+					loadscene(get(next_scene_name), null, MERGE, BLEND(1.5, easeInCubic));
+				);
+			);
+		);
+	</action>
+
+	<action name="cancel_intro">
+		if(!global_intro_cancelled,
+			set(global_intro_cancelled, true);
+			set(is_intro_running, false);
+			stoptween(view.hlookat);
+		);
+	</action>
+	<!-- ============================================== -->
+
+	<scene name="scene_01ytjbxo" title="01正门" onstart="" thumburl="panos/01ytjbxo.tiles/thumb.jpg" lat="-0.00000000" lng="-0.00000000" heading="0.0">
+		
+		<control bouncinglimits="calc:image.cube ? true : false" />
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="panos/01ytjbxo.tiles/preview.jpg" />
+
+		<image>
+			<cube url="panos/01ytjbxo.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2560" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="3.711" atv="28.937" linkedscene="scene_02xknxof-1" />
+
+	</scene>
+
+	<scene name="scene_02xknxof-1" title="02大厅-1" onstart="" thumburl="panos/02xknxof-1.tiles/thumb.jpg" lat="-0.00000000" lng="-0.00000000" heading="0.0">
+		
+		<control bouncinglimits="calc:image.cube ? true : false" />
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="panos/02xknxof-1.tiles/preview.jpg" />
+
+		<image>
+			<cube url="panos/02xknxof-1.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2560" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="3.516" atv="26.534" linkedscene="scene_02xknxof-2" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="-175.439" atv="14.135" linkedscene="scene_01ytjbxo" />
+
+	</scene>
+
+	<scene name="scene_02xknxof-2" title="02大厅-2" onstart="" thumburl="panos/02xknxof-2.tiles/thumb.jpg" lat="-0.00000000" lng="-0.00000000" heading="0.0">
+		
+		<control bouncinglimits="calc:image.cube ? true : false" />
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="panos/02xknxof-2.tiles/preview.jpg" />
+
+		<image>
+			<cube url="panos/02xknxof-2.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2560" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="63.401" atv="13.422" linkedscene="scene_02xknxof-3" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="-46.916" atv="8.399" linkedscene="scene_02xknxof-4" />
+		<hotspot name="spot3" style="skin_hotspotstyle" ath="-176.821" atv="8.884" linkedscene="scene_02xknxof-1" />
+		
+
+	</scene>
+
+	<scene name="scene_02xknxof-3" title="02大厅-3" onstart="" thumburl="panos/02xknxof-3.tiles/thumb.jpg" lat="-0.00000000" lng="-0.00000000" heading="0.0">
+		
+		<control bouncinglimits="calc:image.cube ? true : false" />
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="panos/02xknxof-3.tiles/preview.jpg" />
+
+		<image>
+			<cube url="panos/02xknxof-3.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2560" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="-75.234" atv="5.855" linkedscene="scene_02xknxof-4" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="-124.342" atv="12.035" linkedscene="scene_02xknxof-2" />
+
+	</scene>
+
+	<scene name="scene_02xknxof-4" title="02大厅-4" onstart="" thumburl="panos/02xknxof-4.tiles/thumb.jpg" lat="-0.00000000" lng="-0.00000000" heading="0.0">
+		
+		<control bouncinglimits="calc:image.cube ? true : false" />
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="panos/02xknxof-4.tiles/preview.jpg" />
+
+		<image>
+			<cube url="panos/02xknxof-4.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2560" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="-12.605" atv="6.935" linkedscene="scene_03alhbbt-1" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="110.945" atv="5.459" linkedscene="scene_02xknxof-3" />
+		<hotspot name="spot3" style="skin_hotspotstyle" ath="140.682" atv="6.733" linkedscene="scene_02xknxof-2" />
+
+	</scene>
+
+	<scene name="scene_03alhbbt-1" title="03过道-1" onstart="" thumburl="panos/03alhbbt-1.tiles/thumb.jpg" lat="-0.00000000" lng="-0.00000000" heading="0.0">
+		
+		<control bouncinglimits="calc:image.cube ? true : false" />
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="panos/03alhbbt-1.tiles/preview.jpg" />
+
+		<image>
+			<cube url="panos/03alhbbt-1.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2560" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="6.483" atv="9.917" linkedscene="scene_03alhbbt-2" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="157.622" atv="9.360" linkedscene="scene_02xknxof-4" />
+
+	</scene>
+
+	<scene name="scene_03alhbbt-2" title="03过道-2" onstart="" thumburl="panos/03alhbbt-2.tiles/thumb.jpg" lat="-0.00000000" lng="-0.00000000" heading="0.0">
+		
+		<control bouncinglimits="calc:image.cube ? true : false" />
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="panos/03alhbbt-2.tiles/preview.jpg" />
+
+		<image>
+			<cube url="panos/03alhbbt-2.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2560" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="64.623" atv="10.793" linkedscene="scene_03alhbbt-3" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="4.193" atv="7.704" linkedscene="scene_04xxvxof-1" />
+		<hotspot name="spot3" style="skin_hotspotstyle" ath="-150.884" atv="11.593" linkedscene="scene_03alhbbt-1" />
+
+	</scene>
+
+	<scene name="scene_03alhbbt-3" title="03过道-3" onstart="" thumburl="panos/03alhbbt-3.tiles/thumb.jpg" lat="-0.00000000" lng="-0.00000000" heading="0.0">
+		
+		<control bouncinglimits="calc:image.cube ? true : false" />
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="panos/03alhbbt-3.tiles/preview.jpg" />
+
+		<image>
+			<cube url="panos/03alhbbt-3.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2560" />
+		</image>
+
+	</scene>
+
+	<scene name="scene_03alhbbt-4" title="03过道-4" onstart="" thumburl="panos/03alhbbt-4.tiles/thumb.jpg" lat="-0.00000000" lng="-0.00000000" heading="0.0">
+		
+		<control bouncinglimits="calc:image.cube ? true : false" />
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="panos/03alhbbt-4.tiles/preview.jpg" />
+
+		<image>
+			<cube url="panos/03alhbbt-4.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2560" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="149.533" atv="10.660" linkedscene="scene_03alhbbt-3" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="-165.903" atv="9.336" linkedscene="scene_03alhbbt-2" />
+
+	</scene>
+
+	<scene name="scene_04xxvxof-1" title="04展厅-1" onstart="" thumburl="panos/04xxvxof-1.tiles/thumb.jpg" lat="-0.00000000" lng="-0.00000000" heading="0.0">
+		
+		<control bouncinglimits="calc:image.cube ? true : false" />
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="panos/04xxvxof-1.tiles/preview.jpg" />
+
+		<image>
+			<cube url="panos/04xxvxof-1.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2560" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="25.821" atv="14.610" linkedscene="scene_04xxvxof-2" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="-34.716" atv="9.913" linkedscene="scene_04xxvxof-3" />
+		<hotspot name="spot3" style="skin_hotspotstyle" ath="-169.550" atv="15.670" linkedscene="scene_03alhbbt-4" />
+
+		<hotspot name="spot_3d_model" 
+		         url="images/查看产品.png" 
+		         ath="18.5" atv="-1" 
+		         scale="0.5" 
+		         zoom="true"
+		         onclick="js(openThreeModel('device_001', '中央控制主机'));"
+		         onhover="showtext('查看产品');"
+		         />
+
+	</scene>
+
+	<scene name="scene_04xxvxof-2" title="04展厅-2" onstart="" thumburl="panos/04xxvxof-2.tiles/thumb.jpg" lat="-0.00000000" lng="-0.00000000" heading="0.0">
+		
+		<control bouncinglimits="calc:image.cube ? true : false" />
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="panos/04xxvxof-2.tiles/preview.jpg" />
+
+		<image>
+			<cube url="panos/04xxvxof-2.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2560" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="-13.203" atv="14.411" linkedscene="scene_04xxvxof-3" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="-94.092" atv="15.079" linkedscene="scene_04xxvxof-1" />
+
+	</scene>
+
+	<scene name="scene_04xxvxof-3" title="04展厅-3" onstart="" thumburl="panos/04xxvxof-3.tiles/thumb.jpg" lat="-0.00000000" lng="-0.00000000" heading="0.0">
+		
+		<control bouncinglimits="calc:image.cube ? true : false" />
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="panos/04xxvxof-3.tiles/preview.jpg" />
+
+		<image>
+			<cube url="panos/04xxvxof-3.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2560" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="0.420" atv="13.402" linkedscene="scene_04xxvxof-4" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="153.271" atv="12.184" linkedscene="scene_04xxvxof-2" />
+		<hotspot name="spot3" style="skin_hotspotstyle" ath="-156.791" atv="10.402" linkedscene="scene_04xxvxof-1" />
+
+	</scene>
+
+	<scene name="scene_04xxvxof-4" title="04展厅-4" onstart="" thumburl="panos/04xxvxof-4.tiles/thumb.jpg" lat="-0.00000000" lng="-0.00000000" heading="0.0">
+		
+		<control bouncinglimits="calc:image.cube ? true : false" />
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="panos/04xxvxof-4.tiles/preview.jpg" />
+
+		<image>
+			<cube url="panos/04xxvxof-4.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2560" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="18.069" atv="12.001" linkedscene="scene_04xxvxof-5" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="160.380" atv="22.507" linkedscene="scene_04xxvxof-3" />
+
+	</scene>
+
+	<scene name="scene_04xxvxof-5" title="04展厅-5" onstart="" thumburl="panos/04xxvxof-5.tiles/thumb.jpg" lat="-0.00000000" lng="-0.00000000" heading="0.0">
+		
+		<control bouncinglimits="calc:image.cube ? true : false" />
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="panos/04xxvxof-5.tiles/preview.jpg" />
+
+		<image>
+			<cube url="panos/04xxvxof-5.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2560" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="2.728" atv="9.561" linkedscene="scene_04xxvxof-6" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="149.876" atv="15.594" linkedscene="scene_04xxvxof-4" />
+
+	</scene>
+
+	<scene name="scene_04xxvxof-6" title="04展厅-6" onstart="" thumburl="panos/04xxvxof-6.tiles/thumb.jpg" lat="-0.00000000" lng="-0.00000000" heading="0.0">
+		
+		<control bouncinglimits="calc:image.cube ? true : false" />
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="panos/04xxvxof-6.tiles/preview.jpg" />
+
+		<image>
+			<cube url="panos/04xxvxof-6.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2560" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="2.519" atv="6.684" linkedscene="scene_04xxvxof-7" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="175.402" atv="12.607" linkedscene="scene_04xxvxof-5" />
+
+	</scene>
+
+	<scene name="scene_04xxvxof-7" title="04展厅-7" onstart="" thumburl="panos/04xxvxof-7.tiles/thumb.jpg" lat="-0.00000000" lng="-0.00000000" heading="0.0">
+		
+		<control bouncinglimits="calc:image.cube ? true : false" />
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="panos/04xxvxof-7.tiles/preview.jpg" />
+
+		<image>
+			<cube url="panos/04xxvxof-7.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2560" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="-1.470" atv="10.789" linkedscene="scene_04xxvxof-8" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="-177.319" atv="10.197" linkedscene="scene_04xxvxof-6" />
+
+	</scene>
+
+	<scene name="scene_04xxvxof-8" title="04展厅-8" onstart="" thumburl="panos/04xxvxof-8.tiles/thumb.jpg" lat="-0.00000000" lng="-0.00000000" heading="0.0">
+		
+		<control bouncinglimits="calc:image.cube ? true : false" />
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="panos/04xxvxof-8.tiles/preview.jpg" />
+
+		<image>
+			<cube url="panos/04xxvxof-8.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2560" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="42.616" atv="14.808" linkedscene="scene_04xxvxof-9" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="-176.335" atv="14.363" linkedscene="scene_04xxvxof-7" />
+
+	</scene>
+
+	<scene name="scene_04xxvxof-9" title="04展厅-9" onstart="" thumburl="panos/04xxvxof-9.tiles/thumb.jpg" lat="-0.00000000" lng="-0.00000000" heading="0.0">
+		
+		<control bouncinglimits="calc:image.cube ? true : false" />
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="panos/04xxvxof-9.tiles/preview.jpg" />
+
+		<image>
+			<cube url="panos/04xxvxof-9.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2560" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="23.214" atv="20.503" linkedscene="scene_04xxvxof-10" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="117.200" atv="19.764" linkedscene="scene_04xxvxof-8" />
+
+	</scene>
+
+	<scene name="scene_04xxvxof-10" title="04展厅-10" onstart="" thumburl="panos/04xxvxof-10.tiles/thumb.jpg" lat="-0.00000000" lng="-0.00000000" heading="0.0">
+		
+		<control bouncinglimits="calc:image.cube ? true : false" />
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="panos/04xxvxof-10.tiles/preview.jpg" />
+
+		<image>
+			<cube url="panos/04xxvxof-10.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2560" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="-1.890" atv="10.786" linkedscene="scene_04xxvxof-12" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="-95.572" atv="13.340" linkedscene="scene_04xxvxof-14" />
+		<hotspot name="spot3" style="skin_hotspotstyle" ath="80.144" atv="19.016" linkedscene="scene_04xxvxof-9" />
+		
+
+	</scene>
+
+	<scene name="scene_04xxvxof-11" title="04展厅-11" onstart="" thumburl="panos/04xxvxof-11.tiles/thumb.jpg" lat="-0.00000000" lng="-0.00000000" heading="0.0">
+		
+		<control bouncinglimits="calc:image.cube ? true : false" />
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="panos/04xxvxof-11.tiles/preview.jpg" />
+
+		<image>
+			<cube url="panos/04xxvxof-11.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2560" />
+		</image>
+
+	</scene>
+
+	<scene name="scene_04xxvxof-12" title="04展厅-12" onstart="" thumburl="panos/04xxvxof-12.tiles/thumb.jpg" lat="-0.00000000" lng="-0.00000000" heading="0.0">
+		
+		<control bouncinglimits="calc:image.cube ? true : false" />
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="panos/04xxvxof-12.tiles/preview.jpg" />
+
+		<image>
+			<cube url="panos/04xxvxof-12.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2560" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="-98.826" atv="22.075" linkedscene="scene_04xxvxof-13" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="172.923" atv="12.394" linkedscene="scene_04xxvxof-10" />
+
+	</scene>
+
+	<scene name="scene_04xxvxof-13" title="04展厅-13" onstart="" thumburl="panos/04xxvxof-13.tiles/thumb.jpg" lat="-0.00000000" lng="-0.00000000" heading="0.0">
+		
+		<control bouncinglimits="calc:image.cube ? true : false" />
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="panos/04xxvxof-13.tiles/preview.jpg" />
+
+		<image>
+			<cube url="panos/04xxvxof-13.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2560" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="-161.697" atv="13.826" linkedscene="scene_04xxvxof-14" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="90.825" atv="21.633" linkedscene="scene_04xxvxof-12" />
+
+	</scene>
+
+	<scene name="scene_04xxvxof-14" title="04展厅-14" onstart="" thumburl="panos/04xxvxof-14.tiles/thumb.jpg" lat="-0.00000000" lng="-0.00000000" heading="0.0">
+		
+		<control bouncinglimits="calc:image.cube ? true : false" />
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="panos/04xxvxof-14.tiles/preview.jpg" />
+
+		<image>
+			<cube url="panos/04xxvxof-14.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2560" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="68.022" atv="22.757" linkedscene="scene_04xxvxof-15" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="12.204" atv="11.542" linkedscene="scene_04xxvxof-19" />
+		<hotspot name="spot3" style="skin_hotspotstyle" ath="126.735" atv="25.287" linkedscene="scene_04xxvxof-13" />
+		<hotspot name="spot4" style="skin_hotspotstyle" ath="179.894" atv="12.786" linkedscene="scene_04xxvxof-10" />
+
+	</scene>
+
+	<scene name="scene_04xxvxof-15" title="04展厅-15" onstart="" thumburl="panos/04xxvxof-15.tiles/thumb.jpg" lat="-0.00000000" lng="-0.00000000" heading="0.0">
+		
+		<control bouncinglimits="calc:image.cube ? true : false" />
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="panos/04xxvxof-15.tiles/preview.jpg" />
+
+		<image>
+			<cube url="panos/04xxvxof-15.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2560" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="-0.630" atv="13.798" linkedscene="scene_04xxvxof-16" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="146.828" atv="30.498" linkedscene="scene_04xxvxof-14" />
+
+	</scene>
+
+	<scene name="scene_04xxvxof-16" title="04展厅-16" onstart="" thumburl="panos/04xxvxof-16.tiles/thumb.jpg" lat="-0.00000000" lng="-0.00000000" heading="0.0">
+		
+		<control bouncinglimits="calc:image.cube ? true : false" />
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="panos/04xxvxof-16.tiles/preview.jpg" />
+
+		<image>
+			<cube url="panos/04xxvxof-16.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2560" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="-0.347" atv="23.640" linkedscene="scene_04xxvxof-17" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="-90.784" atv="13.877" linkedscene="scene_04xxvxof-15" />
+
+	</scene>
+
+	<scene name="scene_04xxvxof-17" title="04展厅-17" onstart="" thumburl="panos/04xxvxof-17.tiles/thumb.jpg" lat="-0.00000000" lng="-0.00000000" heading="0.0">
+		
+		<control bouncinglimits="calc:image.cube ? true : false" />
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="panos/04xxvxof-17.tiles/preview.jpg" />
+
+		<image>
+			<cube url="panos/04xxvxof-17.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2560" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="-5.028" atv="10.347" linkedscene="scene_04xxvxof-18" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="-97.410" atv="21.668" linkedscene="scene_04xxvxof-16" />
+
+	</scene>
+
+	<scene name="scene_04xxvxof-18" title="04展厅-18" onstart="" thumburl="panos/04xxvxof-18.tiles/thumb.jpg" lat="-0.00000000" lng="-0.00000000" heading="0.0">
+		
+		<control bouncinglimits="calc:image.cube ? true : false" />
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="panos/04xxvxof-18.tiles/preview.jpg" />
+
+		<image>
+			<cube url="panos/04xxvxof-18.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2560" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="97.771" atv="23.592" linkedscene="scene_04xxvxof-19" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="-139.988" atv="14.034" linkedscene="scene_04xxvxof-17" />
+
+	</scene>
+
+	<scene name="scene_04xxvxof-19" title="04展厅-19" onstart="" thumburl="panos/04xxvxof-19.tiles/thumb.jpg" lat="-0.00000000" lng="-0.00000000" heading="0.0">
+		
+		<control bouncinglimits="calc:image.cube ? true : false" />
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="panos/04xxvxof-19.tiles/preview.jpg" />
+
+		<image>
+			<cube url="panos/04xxvxof-19.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2560" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="84.621" atv="22.343" linkedscene="scene_04xxvxof-20" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="149.617" atv="26.058" linkedscene="scene_04xxvxof-18" />
+		<hotspot name="spot3" style="skin_hotspotstyle" ath="-172.810" atv="12.824" linkedscene="scene_04xxvxof-15" />
+
+	</scene>
+
+	<scene name="scene_04xxvxof-20" title="04展厅-20" onstart="" thumburl="panos/04xxvxof-20.tiles/thumb.jpg" lat="-0.00000000" lng="-0.00000000" heading="0.0">
+		
+		<control bouncinglimits="calc:image.cube ? true : false" />
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="panos/04xxvxof-20.tiles/preview.jpg" />
+
+		<image>
+			<cube url="panos/04xxvxof-20.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2560" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="15.270" atv="20.670" linkedscene="scene_04xxvxof-21" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="-77.018" atv="16.339" linkedscene="scene_04xxvxof-23" />
+		<hotspot name="spot3" style="skin_hotspotstyle" ath="173.976" atv="20.039" linkedscene="scene_04xxvxof-19" />
+
+	</scene>
+
+	<scene name="scene_04xxvxof-21" title="04展厅-21" onstart="" thumburl="panos/04xxvxof-21.tiles/thumb.jpg" lat="-0.00000000" lng="-0.00000000" heading="0.0">
+		
+		<control bouncinglimits="calc:image.cube ? true : false" />
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="panos/04xxvxof-21.tiles/preview.jpg" />
+
+		<image>
+			<cube url="panos/04xxvxof-21.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2560" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="-23.556" atv="23.851" linkedscene="scene_04xxvxof-22" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="-101.724" atv="12.664" linkedscene="scene_04xxvxof-20" />
+
+	</scene>
+
+	<scene name="scene_04xxvxof-22" title="04展厅-22" onstart="" thumburl="panos/04xxvxof-22.tiles/thumb.jpg" lat="-0.00000000" lng="-0.00000000" heading="0.0">
+		
+		<control bouncinglimits="calc:image.cube ? true : false" />
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="panos/04xxvxof-22.tiles/preview.jpg" />
+
+		<image>
+			<cube url="panos/04xxvxof-22.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2560" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="16.428" atv="21.049" linkedscene="scene_04xxvxof-23" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="-92.604" atv="22.971" linkedscene="scene_04xxvxof-21" />
+
+	</scene>
+
+	<scene name="scene_04xxvxof-23" title="04展厅-23" onstart="" thumburl="panos/04xxvxof-23.tiles/thumb.jpg" lat="-0.00000000" lng="-0.00000000" heading="0.0">
+		
+		<control bouncinglimits="calc:image.cube ? true : false" />
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="panos/04xxvxof-23.tiles/preview.jpg" />
+
+		<image>
+			<cube url="panos/04xxvxof-23.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2560" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="51.032" atv="25.276" linkedscene="scene_04xxvxof-24" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="130.988" atv="24.337" linkedscene="scene_04xxvxof-22" />
+		<hotspot name="spot3" style="skin_hotspotstyle" ath="-163.694" atv="16.739" linkedscene="scene_04xxvxof-20" />
+		
+		
+
+	</scene>
+
+	<scene name="scene_04xxvxof-24" title="04展厅-24" onstart="" thumburl="panos/04xxvxof-24.tiles/thumb.jpg" lat="-0.00000000" lng="-0.00000000" heading="0.0">
+		
+		<control bouncinglimits="calc:image.cube ? true : false" />
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="panos/04xxvxof-24.tiles/preview.jpg" />
+
+		<image>
+			<cube url="panos/04xxvxof-24.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2560" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="-161.442" atv="19.428" linkedscene="scene_04xxvxof-25" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="-61.987" atv="21.965" linkedscene="scene_04xxvxof-23" />
+
+	</scene>
+
+	<scene name="scene_04xxvxof-25" title="04展厅-25" onstart="" thumburl="panos/04xxvxof-25.tiles/thumb.jpg" lat="-0.00000000" lng="-0.00000000" heading="0.0">
+		
+		<control bouncinglimits="calc:image.cube ? true : false" />
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="panos/04xxvxof-25.tiles/preview.jpg" />
+
+		<image>
+			<cube url="panos/04xxvxof-25.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2560" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="-21.190" atv="19.291" linkedscene="scene_04xxvxof-26" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="140.059" atv="20.288" linkedscene="scene_04xxvxof-24" />
+
+	</scene>
+
+	<scene name="scene_04xxvxof-26" title="04展厅-26" onstart="" thumburl="panos/04xxvxof-26.tiles/thumb.jpg" lat="-0.00000000" lng="-0.00000000" heading="0.0">
+		
+		<control bouncinglimits="calc:image.cube ? true : false" />
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="panos/04xxvxof-26.tiles/preview.jpg" />
+
+		<image>
+			<cube url="panos/04xxvxof-26.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2560" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="-0.784" atv="21.654" linkedscene="scene_04xxvxof-27" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="-130.798" atv="26.150" linkedscene="scene_04xxvxof-25" />
+
+	</scene>
+
+	<scene name="scene_04xxvxof-27" title="04展厅-27" onstart="" thumburl="panos/04xxvxof-27.tiles/thumb.jpg" lat="-0.00000000" lng="-0.00000000" heading="0.0">
+		
+		<control bouncinglimits="calc:image.cube ? true : false" />
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="panos/04xxvxof-27.tiles/preview.jpg" />
+
+		<image>
+			<cube url="panos/04xxvxof-27.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2560" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="1.059" atv="14.770" linkedscene="scene_04xxvxof-28" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="-178.656" atv="19.768" linkedscene="scene_04xxvxof-26" />
+		
+
+	</scene>
+
+	<scene name="scene_04xxvxof-28" title="04展厅-28" onstart="" thumburl="panos/04xxvxof-28.tiles/thumb.jpg" lat="-0.00000000" lng="-0.00000000" heading="0.0">
+		
+		<control bouncinglimits="calc:image.cube ? true : false" />
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="panos/04xxvxof-28.tiles/preview.jpg" />
+
+		<image>
+			<cube url="panos/04xxvxof-28.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2560" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="10.386" atv="16.471" linkedscene="scene_04xxvxof-29" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="-177.828" atv="17.843" linkedscene="scene_04xxvxof-27" />
+
+	</scene>
+
+	<scene name="scene_04xxvxof-29" title="04展厅-29" onstart="" thumburl="panos/04xxvxof-29.tiles/thumb.jpg" lat="-0.00000000" lng="-0.00000000" heading="0.0">
+		
+		<control bouncinglimits="calc:image.cube ? true : false" />
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="panos/04xxvxof-29.tiles/preview.jpg" />
+
+		<image>
+			<cube url="panos/04xxvxof-29.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2560" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="-15.568" atv="13.503" linkedscene="scene_04xxvxof-30" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="-108.191" atv="14.865" linkedscene="scene_04xxvxof-32" />
+		<hotspot name="spot3" style="skin_hotspotstyle" ath="169.213" atv="22.118" linkedscene="scene_04xxvxof-28" />
+
+	</scene>
+
+	<scene name="scene_04xxvxof-30" title="04展厅-30" onstart="" thumburl="panos/04xxvxof-30.tiles/thumb.jpg" lat="-0.00000000" lng="-0.00000000" heading="0.0">
+		
+		<control bouncinglimits="calc:image.cube ? true : false" />
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="panos/04xxvxof-30.tiles/preview.jpg" />
+
+		<image>
+			<cube url="panos/04xxvxof-30.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2560" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="-14.194" atv="15.114" linkedscene="scene_04xxvxof-31" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="-119.256" atv="16.571" linkedscene="scene_04xxvxof-29" />
+
+	</scene>
+
+	<scene name="scene_04xxvxof-31" title="04展厅-31" onstart="" thumburl="panos/04xxvxof-31.tiles/thumb.jpg" lat="-0.00000000" lng="-0.00000000" heading="0.0">
+		
+		<control bouncinglimits="calc:image.cube ? true : false" />
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="panos/04xxvxof-31.tiles/preview.jpg" />
+
+		<image>
+			<cube url="panos/04xxvxof-31.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2560" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="2.519" atv="16.715" linkedscene="scene_04xxvxof-32" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="179.630" atv="12.695" linkedscene="scene_05alhbbt-1" />
+		<hotspot name="spot3" style="skin_hotspotstyle" ath="-94.682" atv="13.000" linkedscene="scene_04xxvxof-30" />
+
+	</scene>
+
+	<scene name="scene_04xxvxof-32" title="04展厅-32" onstart="" thumburl="panos/04xxvxof-32.tiles/thumb.jpg" lat="-0.00000000" lng="-0.00000000" heading="0.0">
+		
+		<control bouncinglimits="calc:image.cube ? true : false" />
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="panos/04xxvxof-32.tiles/preview.jpg" />
+
+		<image>
+			<cube url="panos/04xxvxof-32.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2560" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="-85.603" atv="16.099" linkedscene="scene_04xxvxof-31" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="4.611" atv="11.363" linkedscene="scene_04xxvxof-29" />
+
+	</scene>
+
+	<scene name="scene_05alhbbt-1" title="05过道-1" onstart="" thumburl="panos/05alhbbt-1.tiles/thumb.jpg" lat="-0.00000000" lng="-0.00000000" heading="0.0">
+		
+		<control bouncinglimits="calc:image.cube ? true : false" />
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="panos/05alhbbt-1.tiles/preview.jpg" />
+
+		<image>
+			<cube url="panos/05alhbbt-1.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2560" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="-162.579" atv="11.002" linkedscene="scene_05alhbbt-2" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="9.070" atv="15.802" linkedscene="scene_04xxvxof-31" />
+
+	</scene>
+
+	<scene name="scene_05alhbbt-2" title="05过道-2" onstart="" thumburl="panos/05alhbbt-2.tiles/thumb.jpg" lat="-0.00000000" lng="-0.00000000" heading="0.0">
+		
+		<control bouncinglimits="calc:image.cube ? true : false" />
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="panos/05alhbbt-2.tiles/preview.jpg" />
+
+		<image>
+			<cube url="panos/05alhbbt-2.tiles/%s/l%l/%v/l%l_%s_%v_%h.jpg" multires="512,640,1280,2560" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="-10.183" atv="12.806" linkedscene="scene_05alhbbt-1" />
+
+	</scene>
+
+
+</krpano>
